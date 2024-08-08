@@ -1,0 +1,27 @@
+redis is most popular caching tool. Its a key value pair gaint json database
+    set key value
+    get key
+    del key
+    exists key
+    keys * 
+    flushall
+
+ttl key // give when the key expires
+
+# list
+    lpush key value
+    rpush key value
+    lpop key 
+    rpop key 
+    lrange key index eg of index (0 -1) i.e. start to last
+ 
+# set
+    Sadd key "value"
+    Smembers key
+
+# Hash 
+    Hset key value
+    Hget key
+    HgetAll key
+    Hdel key
+    Hexists key

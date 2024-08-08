@@ -1,0 +1,668 @@
+// trello node js
+
+// node is an open source , cross platform javascript runtime environment , its is a framework
+// capable to code outside the browser
+// it can not only the standard ecma language but also new feature that are made  avialable through C++ binding using the V* engine
+
+// nodejs -> js Library -> c++ feature -> dependencies (v8 , libuv, crypto ,etc)
+
+// const myURL = new URL("https://geeksforgeeks.org:80/foo#ram");
+// console.log(myURL);
+// myURL.protocol = 'abc'
+// console.log(myURL);
+
+// console.log(global)
+// const encodedData = btoa("Hello, world"); // encode a string
+// const decodedData = atob(encodedData); // decode the string
+
+// console.log(encodedData ,' \n \n' , decodedData);
+// console.log(console.Console)
+
+// event loop
+// workers
+// threads
+// nexttick
+// concurrency
+// parallelism
+// node js working
+// clusters
+// eventEmitters
+// childprocess
+
+// All 6 libraries from which nodeJs is created(libuv is important)
+
+// creating a server
+// const http = require('http');
+
+// const server = http.createServer((req, res) => {
+//     res.writeHead(200)
+//     res.end('hello')
+// })
+
+// server.listen(8000, () => {
+//     console.log('sucess');
+// })
+
+// libuv makes a node js event driven non blocking
+// libuv is  a cross pplatform open source library wirtten in c language
+// why
+// handles asynchronus non blocking operation in node js
+// how ?
+// using thread pool , event loop
+
+// thread pool
+// fs.readfile and crypto.pbkdf2 are using thread pool of libuv make it
+
+// const fs = require('fs');
+// let a = false;
+// console.log("console");
+// fs.readFile('./files/copy.txt', (err, data) => {
+//     if (data) {
+//         a = true
+//         console.log("data");
+//     }
+
+// })
+// console.log('last');
+
+// by deafult thread pool size is 4
+// icnrease thread pool size using processs.env.UV_TREADPOOL_SIZE = number_you_want
+
+// const crypto = require('crypto');
+
+// process.env.UV_THREADPOOL_SIZE =7
+// const Calls = 9
+// const start = Date.now()
+// for (let i = 0; i < Calls; i++) {
+//     crypto.pbkdf2("password", "salt", 10000, 512, 'sha512', () => {
+//         console.log('hash ' , i , Date.now() - start);
+//     })
+// }
+
+// http  request are also asynchronus but it not use cpu core and uv thead
+
+// process in node js
+// process.on("beforeExit", (code) => {
+//   console.log("Process beforeExit event with code: ", code);
+// });
+
+// process.on("exit", (code) => {
+//   console.log("Process exit event with code: ", code);
+// });
+
+// console.log("This message is displayed first.");
+
+// Different types of protocols and what's the need
+//  htttp and htpps
+
+// what is node js and why they are used
+// Node. js is an open-source, cross-platform JavaScript runtime environment and library for running web applications outside the client's browser
+
+// Global Object
+// In Node.js, the global object represents the global scope and acts as the container for all globally accessible variables, functions, and objects within a Node.js application. In the browser, the global object is typically represented by window, but in Node.js, it is represented by global.
+// console.log(global);
+// global: The global object itself is a global variable that holds the reference to the global scope. It provides access to all other global variables and functions.
+// console: The console module provides methods for logging information to the console. Common methods include console.log(), console.error(), console.warn(), etc.
+// process: The process object provides information and control over the current Node.js process. It contains properties and methods related to the environment, arguments, and exiting the process.
+// Buffer: The Buffer class is used to handle binary data, such as reading and writing files or handling network streams.
+// setTimeout() and setInterval(): Functions to schedule the execution of a function after a certain delay (using setTimeout) or at regular intervals (using setInterval).
+// __dirname: A string representing the path of the current directory in which the currently executing script resides.
+// __filename: A string representing the path of the currently executing script.
+// require(): The function used to import external modules into a Node.js application.
+// module, exports, and require.cache: Objects used for managing the scope and sharing code between different modules in a Node.js application.
+
+// REPL stands for "Read-Eval-Print Loop." It is a command-line environment provided by Node.js that allows you to interactively run JavaScript code, line by line, and see the immediate results. The Node.js REPL is a useful tool for testing code snippets, experimenting with JavaScript features, and debugging.
+
+// What are processes
+
+// Modules and different ways to export them
+
+// module.exports = {
+//   add,
+//   subtract,
+// };
+// exports.PI = 3.14312
+
+// Event Loop
+// Single Threaded: Node.js operates on a single thread, which means it uses a single main thread to execute JavaScript code. This is in contrast to traditional multi-threaded server models. The single-threaded nature simplifies development and avoids many of the complexities associated with traditional multi-threaded programming.
+
+// Non-Blocking I/O: Node.js uses non-blocking I/O operations, which means it can perform asynchronous tasks without waiting for the result before moving on to the next task. This is essential for handling concurrent connections efficiently. Instead of blocking the execution, Node.js delegates I/O operations to the underlying operating system and proceeds with executing other tasks.
+
+// Event Loop: The Event Loop is the heart of Node.js. It is responsible for handling all asynchronous operations and managing the execution of events. The Event Loop continuously checks for pending events in the event queue and executes their associated callbacks when the main thread is free.
+
+// Event Queue: The Event Queue is a queue where all the asynchronous events are placed once they are completed. These events can be I/O operations, timers, or callbacks from other asynchronous functions. The Event Loop checks the Event Queue for pending events and executes their associated callbacks one by one in a loop.
+
+// Execution Phases: The Event Loop operates in a series of phases, each with its own priority. The main phases are:
+
+// Timers: Executes callbacks scheduled by setTimeout() and setInterval().
+// Pending I/O: Executes I/O-related callbacks. This phase is for I/O polling.
+// Idle, Prepare: These are internal phases used by Node.js.
+// Poll: Retrieves new I/O events and executes their callbacks.
+// Check: Executes setImmediate() callbacks.
+// Close Callbacks: Executes cleanup callbacks like socket.on('close', ...).
+
+// Process.nextTick(): Node.js provides the process.nextTick() method to schedule a callback to be executed at the beginning of the next iteration of the Event Loop. This ensures that the callback is executed before any other I/O events or timers, making it useful for handling certain cases like flushing pending I/O events before continuing.
+// -> inside microtask queue(nextTick , promise queue) , timer qeueue -> pending callbacks -> idle prepare -> poll -> check -> close callbacks
+// The Event Loop's design allows Node.js to efficiently handle a large number of concurrent connections without the need for creating separate threads for each request. This non-blocking and event-driven architecture makes Node.js ideal for building scalable and high-performance applications, particularly for server-side tasks such as web servers, real-time applications, and APIs.
+
+// output of given program
+// const fs = require("fs");
+
+// setImmediate(() => console.log("setImmediate"));
+
+// fs.readFile("/etc/passwd", (err, data) => {
+//   console.log("reading file");
+// });
+
+// console.log("start");
+
+// process.nextTick(() => console.log("nextTick"));
+
+// setTimeout(() => console.log("setTimeout 1"), 0);
+
+// setTimeout(() => console.log("setTimeout 2"), 3);
+
+// let counter = 0;
+
+// const timeout = setInterval(() => {
+//   console.log("setInterval");
+//   if (counter >= 3) {
+//     console.log("exiting setInterval");
+//     clearInterval(timeout);
+//   }
+//   counter++;
+// }, 0);
+
+// new Promise((resolve, reject) => {
+//   console.log("start promise 1");
+//   resolve("Promise 1");
+// }).then((data) => {
+//   console.log(data);
+// });
+
+// console.log("end");
+
+// events module aloows us to work with events in node js
+// events is an action or an occurence that has happened in our application that we can respond to
+
+// const events = require('events');
+
+// const emitter =  new events()
+
+// emitter.on("order", (name) => {
+//     console.log('order confirm' , name);
+// })
+
+// emitter.on("order", (name) => {
+//   console.log("order decline", name);
+// });
+
+// once vs on once is only runs at one time and on work for all emits action
+// emitter.emit("order")
+// emitter.emit("order")
+// emitter.emit("order")
+// emitter.emit("order", 'name')
+
+// How Can we work on node with multithreading : using clusters , worker_threads and child process
+
+// Child Process https://www.freecodecamp.org/news/node-js-child-processes-everything-you-need-to-know-e69498fe970a/
+
+// clusters if we cpu insentive code app performanace may be slow  , to overcome from this use cluster
+// cluster module can be used to run multiple instance of node js that can distribute workloads
+// const { dblClick } = require("@testing-library/user-event/dist/click");
+// const { Console } = require("console");
+// const http = require("http");
+// http.createServer((req, res) => {
+//  if ('/slow' == req.url) {
+//     for (let i = 0; i < 6000000000; i++) {}
+//     res.end("/slow");
+//  } else {
+//     res.end('home')
+//  }
+// }).listen(8000,() => {
+//     console.log('ok working');
+// })
+
+// const cluster = require('cluster');
+// if (cluster.isMaster) {
+
+//     cluster.fork();
+//     cluster.fork();
+//     console.log("main working");
+// } else {
+//     console.log("else working");
+//     http
+//       .createServer((req, res) => {
+//         if ("/slow" == req.url) {
+//           for (let i = 0; i < 6000000000; i++) {}
+//           res.end("/slow");
+//         } else {
+//           res.end("home");
+//         }
+//       })
+//       .listen(8000, () => {
+//         console.log("ok working");
+//       });
+// }
+
+// Worker Threads module allows running multiplae application threads within a single nodejs instance
+// const {Worker} = require('worker_threads');
+// http
+//   .createServer((req, res) => {
+//     if ("/slow" == req.url) {
+//       const worker = new Worker('./fun.js')
+//       worker.on('message', (j) => {
+//         res.end(`slow ${j}`)
+//       })
+//     } else {
+//       res.end("home");
+//     }
+//   })
+//   .listen(8000, () => {
+//     console.log("ok working");
+//   });
+
+// Cluster Threads:
+// Web Servers: In web server applications, cluster threads can be utilized to handle incoming client requests efficiently. Each thread in the cluster can handle a separate client connection, allowing the server to serve multiple clients simultaneously without blocking or slowing down other requests.
+// Load Balancers: Cluster threads can be employed in load balancers to distribute incoming requests across multiple worker threads or processes. This helps in achieving better resource utilization and ensures that the workload is evenly distributed.
+// Distributed Systems: In distributed systems, cluster threads can be used for communication between different nodes. Each node may have a cluster of threads responsible for handling incoming messages, processing data, and coordinating with other nodes in the network.
+
+// Worker Threads:
+// Parallel Processing: When a computationally intensive task can be divided into smaller subtasks that can be executed independently, worker threads can be used. Each worker thread works on a separate subtask, allowing the overall computation to be performed faster by utilizing multiple processor cores.
+// Asynchronous Operations: In applications that perform I/O operations, such as reading/writing files or making network requests, worker threads can be used to perform these operations asynchronously. This prevents the main thread from being blocked while waiting for I/O operations to complete, leading to improved responsiveness and better overall performance.
+// Task Queues: Worker threads are commonly used in task queue systems. Jobs or tasks are added to the queue, and worker threads retrieve and process them one by one. This approach helps in managing and distributing workloads efficiently.
+
+// Difference Between Child Process and Worker Threads
+
+// Util
+
+// Assert
+
+// OS
+// const os = require('os');
+// console.log(os.cpus().length);
+
+// path module
+
+// const path = require('path');
+// console.log(__dirname);
+// console.log(__filename);
+// console.log(path.basename(__filename)); //basenname basically gives base folder/file name
+
+// console.log(path.extname(__filename));
+// console.log(path.extname(__dirname));
+
+// console.log(path.parse(__dirname));
+
+// console.log(path.isAbsolute(__dirname));
+
+// console.log(path.join("/f1", 'f2')); // are used to make a path
+
+// CLUSTERS
+// worker_threads module enable the use of threads that execute js in parallel
+// code excuted in a worker thread in seperate child process , preventing it from blocking you main application
+// cluster module can be used to run multiple instance of node js that can distribute workloads
+// worker_threads module allows running multiplae application threads within a single nodejs instance
+
+// Stream  is a sequence of data that is being moved from one point to another over time
+// const fs = require('fs');
+// const readStream = fs.createReadStream("./files/copy.txt", {
+//   encoding: "utf-8",
+// });
+// const writeStream = fs.createWriteStream("./files/data1.txt", {
+//   encoding: "utf-8",
+// });
+// readStream.on('data', (chunk) => {
+//     console.log('chunk', chunk);
+//     writeStream.write(chunk)
+// })
+
+// pipes Piping in NodeJS is useful when we need to write some data coming from a source stream to another stream
+// const fs = require("fs");
+// const zlib = require('zlib');
+
+// const gzip = zlib.createGzip()
+// const readStream = fs.createReadStream("./files/copy.txt", {
+//   encoding: "utf-8",
+// });
+
+// readStream.pipe(gzip).pipe(fs.WriteStream('./files/data.txt.gz'));
+
+// const writeStream = fs.createWriteStream("./files/data1.txt");
+
+// readStream.pipe(writeStream);
+
+// examples
+const EventEmitter = require("events");
+
+class WithLog extends EventEmitter {
+  execute(taskFunc) {
+    console.log("Before executing");
+    this.emit("begin");
+    taskFunc();
+    this.emit("end");
+    console.log("After executing");
+  }
+}
+
+const withLog = new WithLog();
+
+withLog.on("begin", () => console.log("About to execute"));
+withLog.execute(() => console.log("*** Executing task ***"));
+withLog.on("end", () => console.log("Done with execute"));
+
+// questions
+
+// What is an error first callback?
+
+// Callback hell in Node.js is the situation in which we have complex nested callbacks. In this, each callback takes arguments that have been obtained as a result of previous callbacks. In this manner, The code structure looks like a pyramid, which leads to less readability and difficulty in maintenance. Also, if there is an error in one function, then all other functions get affected.
+
+//  What are Promises in Node.js? : promise in node js basically works before the event pahse of node js
+
+// What is the difference between Asynchronous and Non-blocking?
+// Asynchronous refers to the programming paradigm where tasks or operations are initiated and executed independently of the main program flow. When an asynchronous operation is initiated, the program does not wait for the operation to complete before moving on to the next instruction. Instead, it continues executing the rest of the code, and once the asynchronous operation finishes, a callback or event is triggered to handle the result or the error.
+// Non-blocking is a characteristic of an event-driven architecture like Node.js, where tasks do not block the execution of other tasks. In a non-blocking system, the program can continue to respond to other requests and events while waiting for long-running operations to complete.
+
+// Node.js provides the ability to create child threads using the worker_threads module. Child threads are separate instances of the V8 JavaScript engine, and they allow you to perform CPU-intensive tasks concurrently without blocking the main event loop.
+
+// events vs callback
+// Events are mechanisms used to notify or signal that something has happened in the program. They follow a publisher-subscriber pattern, where one part of the code (the publisher) emits an event, and other parts of the code (the subscribers) listen for and react to those events.
+// const events = require('events');
+// const emitter = new events()
+// emitter.on('hit', () => {
+//     console.log('hit button');
+// })
+// emitter.emit('hit')
+//  interview questions
+// start pattern
+
+// let n = 3;
+// for (let i = 0; i < n; i++) {
+//   let str = "";
+//   for (let j = 0; j <= n - 1 - i; j++) {
+//     str += " ";
+//   }
+//   for (let j = 0; j <= i; j++) {
+//     str += "* ";
+//   }
+//   console.log(str);
+// }
+// for (let i = 3; i >= 0; i--) {
+//   let str = "";
+//   for (let j = 0; j <= n - 1 - i; j++) {
+//     str += " ";
+//   }
+//   for (let j = i; j >= 0; j--) {
+//     str += "* ";
+//   }
+//   console.log(str);
+// }
+
+// Q1. Given a string, print the final string by pushing all the odd index characters to the end and all the even index characters at the beginning of the string.
+
+// const sort_char_odd_even = (input) => {
+//     let start_str = "";
+//     let end_str = "";
+//     for (let i = 0; i < input.length; i++) {
+//         if (i % 2 == 0) {
+//             start_str = start_str + input[i];
+//         } else {
+//             end_str = end_str + input[i];
+//         }
+//     }
+//     console.log(start_str + end_str)
+// }
+
+// sort_char_odd_even('abcabc');
+// acbbac;
+
+// const find_middle = (arr) => {
+//     const middle =
+//       arr.length % 2 == 0
+//         ? [arr.length / 2 - 1, arr.length / 2]
+//         : Math.floor(arr.length / 2);
+//     return typeof middle != 'number' ? `${arr[middle[0]]} , ${arr[middle[1]]}` : arr[middle]
+// }
+
+// console.log(find_middle([1,2,3,4,5]));
+
+//  Given a string srt_a, write a program to return the sum and average of the digits that appear in the string, ignoring all other characters.
+// Example:
+// Input: str_a = "PYnative29@#8496"
+// Output: Sum: 38, Average: 6.333333333333333
+
+// const find_average = (input) => {
+//     const number_only = input.replace(/\D/g , '')
+//     const sum = `${number_only}`.split('').reduce((acc, next) => acc + Number(next), 0)
+//     const average = sum / `${number_only}`.length
+//     console.log('sum ', sum, 'average' , average);
+// }
+
+// find_average("PYnative29@#8496");
+
+// Write code to Calculate frequency of characters in a string. Assume ‘a’ and ‘A’ are the same.
+// Example 1:
+// Input: laptop
+// Output: freq of l is 1
+// 	freq of a is 1
+// 	freq of p is 2
+// 	freq of t is 1
+// 	freq of o is 1
+
+// const check_frequency_char = (input) => {
+//   const result = input.split('').reduce((acc, n) => {
+//     acc[n] = (acc[n] || 0) + 1
+//     return acc
+//     }, {})
+//   return result
+// }
+
+// console.log(check_frequency_char("laptop"));
+
+// Q3 an array of strings arr and a string s, find if s follows the same order pattern.
+// Example 1:
+// arr = ["cat", "dog", "dog", "cat"] and s = "abba", return true
+// Explanation: cat is equivalent to a and dog is equivalent to b so according to the pattern to match abba = cat dog dog cat if we check the array it should be present in the same order.
+
+// const pattern_match = (arr, s) => {
+//   let alpha = new Set(s);
+//   let r_arr = {};
+//   for (let i = 0; i < arr.length; i++) {
+//     if (Object.keys(r_arr).includes(arr[i])) {
+//       r_arr[`${arr[i]}${i}`] = r_arr[`${arr[i]}`];
+//     } else {
+//       r_arr[`${arr[i]}`] = [...alpha][0];
+//       alpha.delete([...alpha][0]);
+//     }
+//   }
+//   console.log(Object.values(r_arr).join("") == s ? "yes" : "false");
+// };
+
+// pattern_match(["cat", "dog", "dog", "cat"], "abba");
+// pattern_match(["rain", "acid", "rain", "acid"], "abca");
+// pattern_match(["rain", "acid", "rain", "acid"], "abba");
+
+// find index
+// const find_index = (arr, target) => {
+//   const result  = arr.findIndex(el =>  el == target)
+//   console.log(result);
+// }
+
+// find_index([-1,0,3,5,9,12] , 9);
+
+// Question 1: You will be given the time as in digital format, examples 3:00, 12:30 etc.
+// You need to tell the measurement of the angle between the hour hand and the minute hand.
+
+// Example 1:
+// Input  - 3:00
+// Output - 90 degree
+// Example 2:
+// Input - 2:37
+// Output - 143.5 degrees
+
+// const angle_measure = (time) => {
+//   const [hour, min] = time.split(":")
+
+//   console.log(hour*30-(11/2)*min);
+// }
+
+// angle_measure('3:00')
+// angle_measure("2:37");
+
+// function binaryAddition(binNum1, binNum2) {
+//   // Convert binary strings to arrays for easier manipulation
+//   let arr1 = binNum1.split('').map(Number);
+//   let arr2 = binNum2.split('').map(Number);
+
+//   let result = [];
+//   let carry = 0;
+
+//   while (arr1.length || arr2.length || carry) {
+//     // Get the last digits of the binary numbers and convert to numbers
+//     const num1 = arr1.pop() || 0;
+//     const num2 = arr2.pop() || 0;
+
+//     // Add the digits along with the carry from the previous step
+//     const sum = num1 + num2 + carry;
+
+//     // Determine the current bit in the result and the carry for the next step
+//     result.unshift(sum % 2);
+//     carry = Math.floor(sum / 2);
+//   }
+
+//   return result.join('');
+// }
+
+// // Example usage:
+// const binaryNumber1 = "1101";
+// const binaryNumber2 = "101";
+// const sum = binaryAddition(binaryNumber1, binaryNumber2);
+// console.log(sum); // Output: "10010"
+
+// rabitmq ,redis , sqs , lambda , monolithic , micro services architecture  , white listing , black listing , ip white  listing , docker
+
+// https://medium.com/@kumuthini.program/how-does-nodejs-handle-multiple-requests-97a2b094e762
+
+
+// process.nextTick(() => {
+//     console.log("nextTick");
+// });
+
+// setImmediate(() => {
+//   console.log("immediate");
+// });
+
+// setTimeout(() => {
+//   console.log("timeout");
+// }, 0);
+
+
+// console.log('first');
+
+
+// db.students.aggregate([
+//   {
+//     $lookup: {
+//       from: "marks",
+//       localField: "sid",
+//       foreignField: "sid",
+//       as: "results",
+//     },
+//   },
+//   {
+//     $addFields: {
+//       avg: { $avg: "$results.mark" },
+//     },
+//   },
+//   {
+//     $match: {
+//       avg: { $gt: 80 }
+//     },
+//   },
+//   {
+//     $project: {
+//       sid: 1,
+//       name: 1,
+//       avg: 1
+//     },
+//   },
+// ]);
+
+// Importing the crypto module
+// const crypto = require("crypto-js")
+// const data = "This is the data that need to be encrypted"
+// const key = "password@111"
+
+// Encrypte the data
+// const encrypted = crypto.AES.encrypt(data, key).toString();
+// console.log("Encrypted data")
+
+// Printing the encrypted data
+// console.log(encrypted)
+// console.log("Decrypted data")
+
+// Decrypting the data
+// const decrypted = crypto.AES.decrypt(encrypted, key)
+// 									.toString(crypto.enc.Utf8)
+// console.log(decrypted)
+
+
+
+// db.students.aggregate([
+//   {
+//     $lookup: {
+//       from: "marks",
+//       let: { sid: "$sid" },
+//       pipeline: [
+//         {
+//           $match: {
+//             $expr: {
+//               $eq: ["$sid", "$$sid"],
+//             },
+//           },
+//         },
+//         {
+//           $group: {
+//             _id: "$sid",
+//             avg_arks: { $avg: "$mark" },
+//           },
+//         },
+//       ],
+//       as: "data",
+//     },
+//   },
+// ]);
+
+
+
+
+
+// db.marks.aggregate([
+//   {
+//     $group: {
+//       _id: "$subject",
+//       avg: { $avg: "$mark" },
+//     },
+//   },
+//   {
+//     $set: {
+//       newId: {
+//         $concat: ["$subject", { $substr: ["$mark", 0, -1] }],
+//       },
+//     },
+//   },
+// ]);
+
+// db.marks.aggregate([
+//   {
+//     $group: {
+//       _id: "$sid",
+//       marksAvg: { $avg: "$mark" },
+//     },
+//   },
+//   {
+//     $sort: { _id: 1 },
+//   },
+// ]);
+
+// db.marks.find({ $expr: { $gt: [80, { $avg: "$mark" }] } });

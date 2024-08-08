@@ -1,0 +1,345 @@
+show dbs
+
+use db_name
+show collections
+
+// create collection and insert data 
+db.students.insertOne({})
+
+// nested documents * level of nesting of individual document is max 16mb 
+db.students.updateOne({name: "Ram"} , {$set : {panCard : false } })
+db.students.updateMany({name: "Ram"} , {$set : {panCard : false } })
+
+{
+    name: "",
+    age: 12,
+    hobbies : ['play' , 'sing'],
+    idCards : {haspancard : true , aadhaarCard : true}
+}
+// find on array
+db.students.find({hobbies : 'sing'})
+// find on object
+db.students.find({'idCards.haspancard' : true})
+.count()
+
+
+// ------------ CRUD --------------
+// ---------- Read --------
+// find and FindOne 
+find method not gives all data at a time  to know more data use it 
+find basically return a cursor on which we have applied multiple methods such as foreach , limit , count but on find one its only gives an single data element not in array form
+
+db.students.find({age : {$lt: 15 , $gt : 12}})
+db.students.find({age: 12} , {what data key you need})
+db.students.find({age: 12} , {name:1 , _id: 0}) // here 1 means to show and 0 mean not show
+
+
+
+// ------ Create ---------
+// insert , insertOne , insertMany
+insert can do both the operation insertOne and  insertMany but the insert is old method so its show warning while using insert
+
+db.students.insertMany([{}, {}]) // if key exists it break the comming the data insertion process also to overcome from this pass the second options that is {ordered : false}
+db.students.insert([{}, {}])
+db.students.insertOne({})
+
+
+// ------ Update ---------
+// updateOne , updateMany
+db.updateOne({where/filter} , {$set : {data need to be changed}})
+db.updateMany({where/filter} , {$set : {data need to be changed}})
+
+
+// ------ Delete ---------
+// deleteOne , deleteMany
+
+db.deleteMany({where/filter})
+
+
+
+// is mongoDB schema less ? 
+
+// new TimeStamp()
+
+// get the type of document key
+typeof db.students.FindOne().name
+
+// delete collections ddb.students.drop() drop individual
+// delete collections ddb.students.dropDatabase() drop all
+
+
+// schema validation
+
+db.createCollection("students" , {
+    validator: {
+        $jsonSchema : {
+            required : [name , age ],
+            properties : {
+                name : {
+                    bsonType : 'string',
+                    description: 'string must'
+                }
+                age : {
+                    bsonType : 'number',
+                    description: 'Number must'
+                }
+            }
+        }
+    },
+    validationAction : 'error | warm'
+}) 
+
+
+
+// from documentations
+try {
+   db.pizzas.bulkWrite( [
+      { insertOne: { document: { _id: 3, type: "beef", size: "medium", price: 6 } } },
+      { insertOne: { document: { _id: 4, type: "sausage", size: "large", price: 10 } } },
+      { updateOne: {
+         filter: { type: "cheese" },
+         update: { $set: { price: 8 } }
+      } },
+      { deleteOne: { filter: { type: "pepperoni"} } },
+      { replaceOne: {
+         filter: { type: "vegan" },
+         replacement: { type: "tofu", size: "small", price: 4 }
+      } }
+   ] )
+} catch( error ) {
+   print( error )
+}
+
+
+db.students.find({hasmacbook: {$exists : true , $ type: 6}})
+db.students.find({name: {$regex : /^A/ }})
+
+createIndex and search
+
+
+
+
+in insertMany , if the error occured due to any reason it stop the further excecution to overcome from this use ordered: false as an secondary option
+
+
+- Use limit() to specify the number of returned documents for a query.
+- Use sort() and limit() to select top / bottom N documents.
+- Use skip() and limit() to paginate the documents in a collection.
+
+
+GETTING STARTED
+What is MongoDB
+Install MongoDB
+MongoDB Basics
+MongoDB Shell
+MongoDB Data Types
+
+INSERTING DOCUMENTS
+    insertOne
+    insertMany
+
+SELECTING DOCUMENTS
+    findOne
+    find
+    Projection: Selecting Returned Fields
+
+COMPARISON QUERY OPERATORS
+    $eq: Equal To Operator
+    $lt: Less Than Operator
+    $lte: Less Than or Equal To Operator
+    $gt: Greater Than Operator
+    $gte: Greater Than or Equal To Operator
+    $ne: Not Equal To Operator
+    $in: In Operator
+    $nin: Not In Operator
+
+LOGICAL QUERY OPERATORS
+    $and: Logical AND Opeartor
+    $or: Logical OR Operator
+    $not: Logical NOT Operator
+    $nor: Logical NOR Operator
+
+ELEMENT QUERY OPERATORS
+    $exists
+    $type
+
+ARRAY QUERY OPERATORS
+    $size
+    $all
+    $elemMatch
+    SORTING & LIMITING
+    sort(): Sorting documents
+    limit(): Limiting documents
+
+UPDATING DOCUMENTS
+    updateOne: Update one Document
+    updateMany: Update Multiple Documents
+    $inc: Increase / Decrease Field Value
+    $min: Update Field Value
+    $max: Update Field Value
+    $mul: Mutiply Field By a Number
+    $unset: Remove Fields
+    $rename: Rename Fields
+    Upsert
+
+DELETING DOCUMENTS
+    deleteOne
+    deleteMany
+
+AGGREGATION
+    Aggregation Pipeline
+    inside $group 
+        $avg
+        $count
+        $sum
+        $max
+        $min
+
+INDEXES
+    MongoDB Indexes
+    Create Index
+    Unique Index
+    Compound index
+    Drop Index
+
+
+db.learns.aggregate([{$group: {_id: '$userId' ,"data" : {"$first" : "$$ROOT"}}} , { $project: {'userId': '$data.userId'}}]).sort({_id: -1})
+
+
+
+
+# Usage of $lookup and $unwind aggregation pipeline
+db.student.aggregate([
+    { $lookup:
+        {
+           from: 'course',
+           localField: '_id',
+           foreignField: 'c_id',
+           as: 'Data'
+        }
+    },
+    {
+       $unwind: '$Data'
+    }
+]).pretty();
+
+
+
+# Usage of $unionWith aggregation stage  
+# The $unionWith operator is used to combine the documents of two or more collections into a single result set. This operator is particularly useful when we need to combine data from different collections with different schemas.
+db.student.aggregate([
+  {
+    $unionWith: {
+      coll: "course",
+      pipeline: [
+        {
+          $project: {
+            _id: 0,
+            courseId: "$c_id",
+            courseTitle: 1
+          }
+        }
+      ]
+    }
+  }
+])
+
+
+// Questions 
+
+>>>>>>>>>>> mongodb+srv://<username>:<password>@cluster0.usqsf.mongodb.net/?retrywrites=true&w=majority
+
+mongodb is specified url that work behind  
+
++srv is basically allow tcp and etc thing by default true
+@cluster0.usqsf.mongodb.net is a port if is not given it by default 27017
+/?options that we have to make a true
+
+
+
+>>>>>>>>>>> Scaling in MongoDB refers to the process of handling increased data volume, user load, or performance requirements by distributing the database workload across multiple servers or instances. MongoDB provides various mechanisms for scaling to meet your application's needs:
+
+    Vertical Scaling (Scaling Up): This involves upgrading the hardware resources of a single MongoDB server, such as increasing CPU, RAM, or storage capacity. This is suitable for smaller workloads or when your application's performance can be improved by adding more resources to a single server.
+
+    Horizontal Scaling (Scaling Out): Horizontal scaling involves distributing the database workload across multiple servers, also known as nodes or replicas. This approach is more suitable for handling larger workloads and improving fault tolerance.
+
+        a. Sharding: Sharding is the process of distributing data across multiple servers (shards) based on a shard key. Each shard contains a subset of the data, and MongoDB manages the distribution of data and queries among the shards. Sharding allows you to handle massive data volumes and provides improved read and write performance.
+
+        b. Replication: MongoDB supports replica sets, which are a group of MongoDB servers that maintain identical copies of data. Replication enhances data availability and fault tolerance. You can have primary and secondary nodes, where the primary node handles writes, and secondary nodes replicate data for improved read scalability and failover.
+
+
+$exits and $type 
+    $exists are used to check if document contains the given value or not 
+    $type gives only that record which have given type
+
+    db.marks.find({mark : {$exists: true/1}})
+    db.marks.find({mark : {$exists: false/0, $type :number}})
+
+
+
+
+query evaluation
+    $expr 
+    db.marks.find({ $expr: { $gt: [80, { $avg: "$mark" }] } });
+
+    $jsonSchema are used to define a schema 
+
+    $regex
+    db.marks.find({name:  {$regex: /^A/ }});
+
+    $text
+    db.marks.find({$text:  {$search: /^A/ }});
+
+
+    mongoose hooks 
+    post , pre inside in model file
+    userschema.post('save' , (doc , next) => {
+
+    })
+    userschema.post('save' , (next) => {
+        log(this)
+    })
+
+hashing password
+userschema.pre('save' , (next) => {
+    const salt =  await bycrpt.genSalt()
+    this.password = await bycrpt.hash(this.password , salt)
+    next
+})
+
+cookie-parser module
+req.cookies
+
+jwt encoded url 
+-> first part is algrithm and its type / tells the server what type of signature is being used
+-> payload / used to identify the user (eg conatins user id)
+-> verify signature / makes the token secure (like a stamp of authenticity)
+
+
+
+
+
+mvc , create a todo using jwt ,  error handling  , orm vs odm
+
+// validator : schama validate  , mongo Hooks , cors , app.use(express.static('public'))
+
+    
+    
+// npm install @babel/core @babel/node @babel/preset-env  
+
+// "start": "nodemon --exec babel-node index.js",  
+ 
+// create a new file .babelrc 
+{
+    "presets" : [
+        "@babel/preset-env"
+    ]
+}
+
+
+// aggregation : its group the data from multiple documents into a single documents based on the specified expression
+
+db.teacher.aggrerate([{$math : {gender :"male"}} , {$group: {_id :"$age" , hoobies :{$push : "$hobies"}}} ,  ,...] , options)
+
+
+https://www.mongodb.com/developer/languages/javascript/getting-started-with-mongodb-and-mongoose/#what-is-a-schema-

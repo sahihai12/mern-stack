@@ -1,0 +1,42 @@
+create table table_name (
+    cloumn_name datatype constraint,
+    cloumn_name datatype constraint,
+    cloumn_name datatype constraint,
+    cloumn_name datatype constraint,
+)
+
+Insert into table_name (cloumn_name , cloumn_name)
+     values 
+    (values1 , values2),
+    (values1 , values2)
+
+constraint
+    NOT NULL - Ensures that a column cannot have a NULL value
+    UNIQUE - Ensures that all values in a column are different
+    PRIMARY KEY - A combination of a NOT NULL and UNIQUE. Uniquely identifies each row in a table
+    FOREIGN KEY - Prevents actions that would destroy links between tables
+    CHECK - Ensures that the values in a column satisfies a specific condition
+    DEFAULT - Sets a default value for a column if no value is specified
+    CREATE INDEX - Used to create and retrieve data from the database very quickly
+
+create table table_name (
+    id int PRIMARY Key,
+)
+or 
+create table table_name (
+    cloumn_name int,
+    PRIMARY Key (cloumn_name) // here we can one or more cloumn_name to make a combination PRIMARY key
+)
+
+create table table_name (
+    col int,
+    FOREIGN key (col) refrences another_table(id)
+)
+
+for cascading delete 
+
+create table table_name (
+    col int,
+    FOREIGN key (col) refrences another_table(id)
+    on delete cascade
+)
