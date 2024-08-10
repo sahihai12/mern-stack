@@ -1,0 +1,82 @@
+@mixin mobile {
+    @media (min-width: 320px) and (max-width: 767px) {
+        @content
+    }
+};
+
+@mixin tablet {
+    @media (min-width: 768px) and (max-width: 1199px) {
+        @content
+    }
+};
+@mixin desktop {
+    @media (min-width: 1200px) and (max-width: 1920px) {
+        @content
+    }
+};
+
+
+// typography
+$prefix: s;
+$space-values: (
+  "0":"0",
+  "2":"2",
+  "4":"4",
+  "6":"6",
+  "8":"8",
+  "12":"12",
+  "16":"16",
+  "20":"20",
+  "24":"24",
+  "32":"32",
+  "40":"40",
+  "48":"48",
+  "52":"52",
+  "56":"56",
+  "60":"60",
+  "64":"64",
+  "80":"80",
+);
+$sides: (
+  "": "all",
+  "t": "top",
+  "r": "right",
+  "b": "bottom",
+  "l": "left",
+);
+
+@each $space-key, $space-value in $space-values {
+  @each $side-key, $side-value in $sides {
+    $property: if($side-key == '', '', -#{$side-value});
+
+    .#{$prefix}-m#{$side-key}-#{$space-key} {
+      margin#{$property}: #{$space-value}px;
+    }
+
+    .#{$prefix}-p#{$side-key}-#{$space-key} {
+      padding#{$property}: #{$space-value}px;
+    }
+  }
+}
+
+$all: (
+  "": "all"
+);
+
+@each $space-key, $space-value in $space-values {
+  @each $side-key, $side-value in $all {
+    $property: if($side-key == '', '', -#{$side-value});
+
+    .#{$prefix}-h#{$side-key}-#{$space-key} {
+      height: #{$space-value}px;
+    }
+
+    .#{$prefix}-w#{$side-key}-#{$space-key} {
+      width: #{$space-value}px;
+    }
+
+    .#{$prefix}-g#{$side-key}-#{$space-key} {
+      gap: #{$space-value}px;
+    }
+  }
+}

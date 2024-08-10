@@ -48,6 +48,11 @@ db.students.insertOne({})
 // updateOne , updateMany
 db.updateOne({where/filter} , {$set : {data need to be changed}})
 db.updateMany({where/filter} , {$set : {data need to be changed}})
+db.updateMany({where/filter} , {$unset : {data need to be changed}})
+db.updateMany({where/filter} , {$rename : {data need to be changed}})
+db.updateMany({where/filter} , {$push : {data need to be changed}})
+db.updateMany({where/filter} , {$pop : {data need to be changed}})
+db.updateMany({where/filter} , {$set : {arrnext.$.next: }}) // positional operator 
 
 
 // ------ Delete ---------
@@ -167,7 +172,8 @@ ARRAY QUERY OPERATORS
     $size
     $all
     $elemMatch
-    SORTING & LIMITING
+
+SORTING & LIMITING
     sort(): Sorting documents
     limit(): Limiting documents
 
@@ -188,6 +194,8 @@ DELETING DOCUMENTS
 
 AGGREGATION
     Aggregation Pipeline
+        $match
+        
     inside $group 
         $avg
         $count
@@ -343,3 +351,10 @@ db.teacher.aggrerate([{$math : {gender :"male"}} , {$group: {_id :"$age" , hoobi
 
 
 https://www.mongodb.com/developer/languages/javascript/getting-started-with-mongodb-and-mongoose/#what-is-a-schema-
+
+
+
+mongodb parctice 
+
+db //https://www.w3resource.com/mongodb-exercises/#google_vignette and problems 87 excerise
+
