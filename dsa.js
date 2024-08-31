@@ -288,6 +288,16 @@ class LinkedList{
         return true
         
     }
+
+    size(){
+        return this.length
+    }
+
+    clear(){
+        this.head = null
+        this.tail = null
+        this.length = 0
+    }
 }
 
 const myLinkedList = new LinkedList()
