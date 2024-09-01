@@ -152,31 +152,188 @@
 
 // node {data : 1, next : null}
 
+// class Node{
+//     constructor(value){
+//         this.head = value
+//         this.next = null 
+//     }
+// }
+
+// class LinkedList{
+//     constructor(value){
+//         this.head = value ? new Node(value) : null
+//         this.tail = this.head
+//         this.length = value ? 1: 0
+//     }
+
+//     push(value){
+//         const newNode = new Node(value)
+
+//         if (this.head) {
+//             this.tail.next = newNode
+//         }else{
+//             this.head = newNode
+//         }
+
+//         this.tail = newNode
+//         this.length++
+//     }
+
+//     pop(){
+//         if (!this.head) {
+//             return undefined
+//         }
+
+//         let temp = this.head
+//         let prev = this.head
+
+//         while(temp.next){
+//             prev = temp
+//             temp = prev.next
+//         }
+
+//         if (this.length == 0) {
+//             this.head = null
+//             this.next = null
+//         }
+
+//         this.tail = prev
+//         this.tail.next = null
+//         this.length--
+
+//         return temp
+//     }
+
+//     unshift(value){
+//         let newNode = new Node(value)
+//         if (!this.head) {
+//             this.head = newNode
+//             this.tail = newNode
+//         }
+//         newNode.next = this.head
+//         this.head = newNode
+//         this.length++ 
+//     }
+
+//     shift(){
+//         if (!this.head) {
+//             return undefined
+//         }
+//         this.head = this.head.next.head
+//         this.length--
+//     }
+
+
+//     getFirst(){
+//         return this.head
+//     }
+
+//     getLast(){
+//         let temp = this.head
+
+//         while(temp.next){
+//             temp = temp.next
+//         }
+
+//         return temp
+//     }
+
+//     getElementById(id){
+//         if (!this.head) {
+//             return 'No Node Found!'
+//         }
+
+//         let count = 0
+//         let temp = this.head
+
+//         while(temp){
+//             if (count ==  id) {
+//                  return temp
+//             }
+//             count++
+//             temp = temp.next
+//         }
+//     }
+
+//     setElementById(id, value){
+//         let nodeFound = this.getElementById(id)
+//         if (nodeFound) {
+//             nodeFound.head = value
+//             return true
+//         }
+//         return false
+//     }
+
+//     insertById(index , value){
+//         if (!this.head) {
+//             return 'No Node Found!'
+//         }
+
+//         if (index == 0) {
+//             this.unshift(value)
+//         }
+//         if (index == this.length) {
+//             this.push(value)
+//         }
+
+//         let newNode =  new Node(value)
+
+//         const temp = this.getElementById(index - 1)
+        
+//         if (!temp) {
+//             return false
+//         }
+//         newNode.next = temp.next
+//         temp.next = newNode
+//         return true
+        
+//     }
+
+//     size(){
+//         return this.length
+//     }
+
+//     clear(){
+//         this.head = null
+//         this.tail = null
+//         this.length = 0
+//     }
+// }
+
+// const myLinkedList = new LinkedList()
+
+// console.log(myLinkedList);
+
+
+// doubly linked list is same as linked list but in this we have one more refrence of previous node
+
 class Node{
     constructor(value){
-        this.head = value
-        this.next = null 
+        this.value = value
+        this.prev = null
+        this.next = null
     }
 }
 
-class LinkedList{
+class DoublyLinkedlist{
     constructor(value){
-        this.head = value ? new Node(value) : null
+        this.head = new Node(value)
         this.tail = this.head
-        this.length = value ? 1: 0
+        this.length = 1
     }
 
     push(value){
-        const newNode = new Node(value)
-
-        if (this.head) {
-            this.tail.next = newNode
-        }else{
+        let newNode =  new Node(value)
+        if (!this.head) {
             this.head = newNode
+            this.tail = newNode
         }
 
+        this.tail.next = newNode
+        newNode.prev = this.tail
         this.tail = newNode
         this.length++
+        return this
     }
 
     pop(){
@@ -184,128 +341,63 @@ class LinkedList{
             return undefined
         }
 
-        let temp = this.head
-        let prev = this.head
 
+        let temp = this.head
+        let prev = temp
         while(temp.next){
             prev = temp
-            temp = prev.next
+            temp = temp.next
         }
 
-        if (this.length == 0) {
-            this.head = null
-            this.next = null
-        }
-
+        prev.next = null
         this.tail = prev
-        this.tail.next = null
         this.length--
-
-        return temp
-    }
-
-    unshift(value){
-        let newNode = new Node(value)
-        if (!this.head) {
-            this.head = newNode
-            this.tail = newNode
-        }
-        newNode.next = this.head
-        this.head = newNode
-        this.length++ 
+        return this
     }
 
     shift(){
         if (!this.head) {
-            return undefined
-        }
-        this.head = this.head.next.head
-        this.length--
-    }
-
-
-    getFirst(){
-        return this.head
-    }
-
-    getLast(){
-        let temp = this.head
-
-        while(temp.next){
-            temp = temp.next
-        }
-
-        return temp
-    }
-
-    getElementById(id){
-        if (!this.head) {
-            return 'No Node Found!'
-        }
-
-        let count = 0
-        let temp = this.head
-
-        while(temp){
-            if (count ==  id) {
-                 return temp
-            }
-            count++
-            temp = temp.next
-        }
-    }
-
-    setElementById(id, value){
-        let nodeFound = this.getElementById(id)
-        if (nodeFound) {
-            nodeFound.head = value
-            return true
-        }
-        return false
-    }
-
-    insertById(index , value){
-        if (!this.head) {
-            return 'No Node Found!'
-        }
-
-        if (index == 0) {
-            this.unshift(value)
-        }
-        if (index == this.length) {
-            this.push(value)
-        }
-
-        let newNode =  new Node(value)
-
-        const temp = this.getElementById(index - 1)
-        
-        if (!temp) {
             return false
         }
-        newNode.next = temp.next
-        temp.next = newNode
-        return true
-        
+
+        if (this.length == 1) {
+            this.head = null
+            this.tail = null
+            this.length = 0
+            return true
+        }
+
+        let firstOne =  this.head
+
+        this.head = this.head.next
+        this.head.prev = null
+        this.length--
+        return firstOne
     }
 
-    size(){
-        return this.length
-    }
+    unshift(value){
+        const newNode = new Node(value)
+        if (!this.head) {
+            this.head = newNode
+            this.tail = this.head
+            this.length++
+            return
+        }
 
-    clear(){
-        this.head = null
-        this.tail = null
-        this.length = 0
+        let temp = this.head
+        this.head = newNode
+        newNode.next = temp
+        this.length++
     }
 }
 
-const myLinkedList = new LinkedList()
+const MyDoublyLinkedList = new DoublyLinkedlist(2)
 
-myLinkedList.push(0)
-myLinkedList.push(2)
+MyDoublyLinkedList.unshift(1)
+console.log(MyDoublyLinkedList);
 
-console.log(myLinkedList);
-console.log(myLinkedList.insertById(10,10));
-console.log(myLinkedList);
+MyDoublyLinkedList.unshift(0)
+MyDoublyLinkedList.pop()
+console.log(MyDoublyLinkedList);
+
 
